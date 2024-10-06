@@ -35,7 +35,6 @@ BS_CROSS_TOOLCHAIN_KERNEL=${BS_DIR_TOP}/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8
 #
 BS_CONFIG_BOOTLOADER_UBOOT=GEC6818_config
 BS_CONFIG_KERNEL=GEC6818_defconfig
-BS_CONFIG_FILESYSTEM=PRODUCT-GEC6818-userdebug
 BS_CONFIT_BUILDROOT=GEC6818_defconfig
 
 setup_environment()
@@ -99,48 +98,13 @@ build_kernel()
 	return 0
 }
 
-build_system()
-{
-	cd ${BS_DIR_TOP} || return 1
-	source build/envsetup.sh || return 1
-	make -j${threads} ${BS_CONFIG_FILESYSTEM} || return 1
-
-	# Make boot.img
-	# Create boot directory
-	mkdir -p ${BS_DIR_TARGET}/boot || return 1
-
-	# Copy some images to boot directory
-	if [ -f ${BS_DIR_RELEASE}/uImage ]; then
-		cp -v ${BS_DIR_RELEASE}/uImage ${BS_DIR_TARGET}/boot
-	fi
-	if [ -f ${BS_DIR_TARGET}/ramdisk.img ]; then
-		cp -v ${BS_DIR_TARGET}/ramdisk.img ${BS_DIR_TARGET}/boot/root.img.gz
-	fi
-	if [ -f ${BS_DIR_TARGET}/ramdisk-recovery.img ]; then
-		cp -v ${BS_DIR_TARGET}/ramdisk-recovery.img ${BS_DIR_TARGET}/boot
-	fi
-
-	# Make boot.img with ext4 format, 64MB
-	mkuserimg.sh -s ${BS_DIR_TARGET}/boot ${BS_DIR_TARGET}/boot.img ext4 boot 67108864
-
-	# Copy to release directory
-	cp -av ${BS_DIR_TARGET}/boot.img ${BS_DIR_RELEASE} || return 1;
-	cp -av ${BS_DIR_TARGET}/system.img ${BS_DIR_RELEASE} || return 1;
-	cp -av ${BS_DIR_TARGET}/cache.img ${BS_DIR_RELEASE} || return 1;
-	cp -av ${BS_DIR_TARGET}/recovery.img ${BS_DIR_RELEASE} || return 1;
-	cp -av ${BS_DIR_TARGET}/userdata.img ${BS_DIR_RELEASE} || return 1;
-
-	return 0
-}
 threads=4
 uboot=no
 kernel=no
-system=no
 
 if [ -z $1 ]; then
 	uboot=yes
 	kernel=yes
-	system=yes
 fi
 
 while [ "$1" ]; do
@@ -155,14 +119,9 @@ while [ "$1" ]; do
 	-k|--kernel)
 	    kernel=yes
 	    ;;
-	-s|--system)
-		system=yes
-	    ;;
 	-a|--all)
 		uboot=yes
 		kernel=yes
-		system=yes
-		buildroot=yes
 	    ;;
 	-h|--help)
 	    cat >&2 <<EOF
@@ -172,7 +131,6 @@ Build script for compile the source of telechips project.
   -j=n                 using n threads when building source project (example: -j=16)
   -u, --uboot          build bootloader uboot from source
   -k, --kernel         build kernel from source
-  -s, --system         build android file system from source
   -a, --all            build all, include anything
   -h, --help           display this help and exit
 EOF
@@ -194,10 +152,6 @@ fi
 
 if [ "${kernel}" = yes ]; then
 	build_kernel || exit 1
-fi
-
-if [ "${system}" = yes ]; then
-	build_system || exit 1
 fi
 
 exit 0
