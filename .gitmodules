@@ -4,3 +4,6 @@
 [submodule "GEC6818uboot"]
 	path = GEC6818uboot
 	url = git@github.com:xhzyw/GEC6818uboot.git
+[submodule "rootfs"]
+	path = rootfs
+	url = git@github.com:xhzyw/rootfs.git
