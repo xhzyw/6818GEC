@@ -45,7 +45,7 @@ setup_environment()
 	mkdir -p ${BS_DIR_TARGET}/boot;
 
 	[ -f "${BS_DIR_TOP}/out/host/linux-x86/bin/mkuserimg.sh" ] ||{ echo "tar generate boot.img tools"; tar xvf tools/generate_boot.tar.gz -C ${BS_DIR_TOP}/out/host/linux-x86/bin;}
-	[ -f "${BS_DIR_TARGET}/boot/root.img.gz" ] ||{ echo "tar boot.tar.gz"; tar xvf tools/boot.tar.gz -C ${BS_DIR_TARGET};}
+	#[ -f "${BS_DIR_TARGET}/boot/root.img.gz" ] ||{ echo "tar boot.tar.gz"; tar xvf tools/boot.tar.gz -C ${BS_DIR_TARGET};}
 
 	PATH=${BS_DIR_TOP}/out/host/linux-x86/bin:$PATH;
 
@@ -77,10 +77,10 @@ build_kernel()
 {
 	export PATH=${BS_DIR_UBOOT}/tools:$PATH 
 	# Compiler kernel
-	cd ${BS_DIR_KERNEL} || return 1
-	make ${BS_CONFIG_KERNEL} ARCH=arm CROSS_COMPILE=${BS_CROSS_TOOLCHAIN_KERNEL} || return 1
-	make -j${threads} ARCH=arm CROSS_COMPILE=${BS_CROSS_TOOLCHAIN_KERNEL} || return 1
-	make -j${threads} ARCH=arm CROSS_COMPILE=${BS_CROSS_TOOLCHAIN_KERNEL} uImage || return 1
+	#cd ${BS_DIR_KERNEL} || return 1
+	#make ${BS_CONFIG_KERNEL} ARCH=arm CROSS_COMPILE=${BS_CROSS_TOOLCHAIN_KERNEL} || return 1
+	#make -j${threads} ARCH=arm CROSS_COMPILE=${BS_CROSS_TOOLCHAIN_KERNEL} || return 1
+	#make -j${threads} ARCH=arm CROSS_COMPILE=${BS_CROSS_TOOLCHAIN_KERNEL} uImage || return 1
 
 	# Copy uImage to release directory
 	#cp -v ${BS_DIR_KERNEL}/arch/arm/boot/uImage ${BS_DIR_RELEASE}
